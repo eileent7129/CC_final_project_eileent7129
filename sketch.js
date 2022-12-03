@@ -1,31 +1,33 @@
 let eyes;
 let xPos;
 let yPos;
-let my_string;
-let speech;
+let my_text;
+let theFont;
+let my_dialogue;
+
+function preload() {
+    my_text = loadStrings('data/dialogue_1.txt'); // array of strings
+    theFont = loadFont('data/font_1.ttf');
+}
 
 function setup() {
-    createCanvas(800, 800);
+    createCanvas(1000, 1000);
     background(0);
     xPos = width / 2 - 100;
-    yPos = height / 2 - 100;
-    my_string = "Hello.";
-
+    yPos = height / 2 - 100;   
     eyes = new Eyes(xPos, yPos);
-    speech = new Dialogue(my_string);
+    my_dialogue = new Dialogue(my_text);
 
 }
 
-
 function draw() {
+    my_dialogue.run();
     eyes.side_look();
-    speech.display();
+    
 }
 
 
 class Eyes {
-
-
     constructor(x,y) {
         this.x = x;
         this.y = y;
@@ -79,22 +81,79 @@ class Eyes {
 
 // will display guide's dialogue across the screen
 class Dialogue {
-
     // I want dialogue text to appear slowly on the screen, letter by letter, as if
     // guide is talking in real time
 
     //maybe also animate text as if its moving in space/ floating animation
 
-    constructor(my_text) { // enter string as a paramter
-        this.text = my_text;
+    constructor(dialogue) { // array of strings for dialogue
+        this.dialogue_arr = dialogue; // array dialogue
+        this.idx = 0; 
+        this.line = this.dialogue_arr[this.idx]; // string from dialogue
     }
 
+    // make each letter of text appear on screen
+    // I want to make the dialogue disappear after some time
+
+    // display text
+    // hide text
+    // timing for text
+
+    run() {
+
+        // frameCount is kinda difficult to use, let me tryh working with time (seconds)
+        let currFrameCount = 0;
+
+        if (frameCount % 30 == 0) {
+            currFrameCount = frameCount;
+            this.display();
+        }
+
+        if (frameCount == currFrameCount + 100) {
+            this.disappear();
+            this.next_line();
+        }
+    }
+   
     display() {
-        text(this.text, 50, 700);
+        textSize(50);
+        fill(255);
+        text(this.line, 100, 700);
     }
 
+    //maybe try disappear by making background = 0 or resetting the background -->use matrix
+    disappear() {
+        background(0);
+    }
+
+    next_line() {
+        this.idx++;
+        this.line = this.dialogue_arr[this.idx];
+    }
+
+ 
+  
 }
 
-// random change to test Github repository
-//another random change to test Github repository
-//final test 
+/*text(this.dialogue_arr[1], 100, 700);*/
+        //let currFrameCount = 0;
+        //let new_text;
+
+        //let newLine = this.dialogue_arr[this.idx];
+        //if (frameCount % 30 == 0) {
+        //    currFrameCount = frameCount;
+        //    textSize(50);
+        //    fill(255);
+        //    new_text = text(newLine, 100, 700);
+
+        //}
+        //print(currFrameCount);
+        //if (frameCount == currFrameCount + 100) {
+        //    print("working");
+        //    fill(0);
+        //    new_text;
+        //    this.idx++;
+        //    if (this.idx == this.dialogue_arr.length) {
+        //        this.idx = this.dialogue_arr.length;
+        //    }
+        //}
