@@ -9,17 +9,48 @@ let my_dialogue;
 let good_dialogue;
 let bad_dialogue;
 let timer = 0;
+let wait = 0;
 let idx = 0;
-let img1;
-let img2;
-let img3;
-let img4;
-let choiceA;
-let choiceB;
+
+let imgA1;
+let imgB1;
+let imgA2;
+let imgB2;
+let imgA3;
+let imgB3;
+let imgA4;
+let imgB4;
+let imgA5;
+let imgB5;
+
+////could turn these arrays into a class
+//let pairArray1 = [];
+//let pairArray2 = [];
+//let pairArray3 = [];
+//let pairArray4 = [];
+//let pairArray5 = [];
+//let imgArray = [];
+
+let photoA;
+let photoB;
+let photoC;
+let photoD;
+let photoE;
+let photoF;
+let photoG;
+let photoH;
+let photoI;
+let photoJ;
+
+
 let score = 0;
 let displayTime = 3;
 let disappearTime = 6;
 let runEnding = false;
+let nextChoice = 1;
+let nextIdx = 0;
+let waitTime = false;
+
 
 function preload() {
     my_text = loadStrings('data/dialogue_1.txt'); // array of strings // dialogue finishes at time = 51
@@ -28,38 +59,80 @@ function preload() {
     good_ending = loadStrings('data/good_ending.txt'); // good ending dialogue
     bad_ending = loadStrings('data/bad_ending.txt'); //bad ending dialogue
 
-    img1 = loadImage('data/photo_a_2.jpeg');
-    img2 = loadImage('data/photo_b_2.jpeg');
+    imgA1 = loadImage('data/photo_a_1.jpeg');
+    imgB1 = loadImage('data/photo_b_1.jpeg');
+
+    imgA2 = loadImage('data/photo_a_2.jpeg');
+    imgB2 = loadImage('data/photo_b_2.jpeg');
+
+    imgA3 = loadImage('data/photo_a_3.jpg');
+    imgB3 = loadImage('data/photo_b_3.jpeg');
+
+    imgA4 = loadImage('data/photo_a_4.jpeg');
+    imgB4 = loadImage('data/photo_b_4.jpeg');
+
+    imgA5 = loadImage('data/photo_a_5.jpeg');
+    imgB5 = loadImage('data/photo_b_5.jpeg');
 }
 
 function setup() {
-    createCanvas(1000, 1000);
+    createCanvas(1500, 1000);
     background(0);
-    xPos = width / 2 - 100;
-    yPos = height / 2 - 100;   
+    xPos = round(width / 2 - 100);
+    yPos = round(height / 2 - 100);
     eyes = new Eyes(xPos, yPos);
     my_dialogue = new Dialogue(my_text);
     good_dialogue = new Dialogue(good_ending);
     bad_dialogue = new Dialogue(bad_ending);
 
-    if (runEnding) {
-        timer = 0;
-    }
+    //if (runEnding) {
+    //    timer = 0;
+    //}
 
     setInterval(incTime, 1000);
+    setInterval(incWait, 1000);
 
-    choiceA = new Photo(img1, width / 6, height / 3, "A"); // correct choice
-    choiceB = new Photo(img2, width * (3 / 6), height / 3, "B"); // incorrent choice
-    
+    photoA = new Photo(imgA1, round(width / 6), round(height / 3), "A"); // real
+    photoA.buttonSetup();
 
+    photoB = new Photo(imgB1, round(width * (3 / 6)), round(height / 3), "B"); // fake
+    photoB.buttonSetup();
+
+    photoC = new Photo(imgA2, round(width / 6), round(height / 3), "A"); // real
+    photoC.buttonSetup();
+
+    photoD = new Photo(imgB2, round(width * (3 / 6)), round(height / 3), "B"); // fake
+    photoD.buttonSetup();
+
+    photoE = new Photo(imgA3, round(width / 6), round(height / 3), "A"); //real
+    photoE.buttonSetup();
+
+    photoF = new Photo(imgB3, round(width * (3 / 6)), round(height / 3), "B"); // fake
+    photoF.buttonSetup();
+
+    photoG = new Photo(imgA4, round(width / 6), round(height / 3), "A"); // real
+    photoG.buttonSetup();
+
+    photoH = new Photo(imgB4, round(width * (3 / 6)), round(height / 3), "B"); // fake
+    photoH.buttonSetup();
+
+    photoI = new Photo(imgA5, round(width / 6), round(height / 3), "A"); // real
+    photoI.buttonSetup();
+
+    photoJ = new Photo(imgB5, round(width * (3 / 6)), round(height / 3), "B"); // fake
+    photoJ.buttonSetup();
+   
 }
 
 function draw() {
+    
+    //background(0);
+   
     /*  my_dialogue.run();*/
 
     // I want dialogue to display for three seconds, disppear for one second
 
-   
+
     my_dialogue.run();
     eyes.side_look();
 
@@ -67,326 +140,204 @@ function draw() {
 
     // maybe give player a designmated amount of time to choose answer
     //create multiple timers for each scene and dialogue
-    if (timer > 55) {
+
+    //focus on choices for now 
+
+    if (timer > 50) {
         eyes.disappear();
-        textSize(50);
-        fill(255);
-        text("Which is one is the imposter?", 160, 250);
-
-        //choice A
-        choiceA.display();
-        choiceA.buttonDisplay();
-        //choice B
-        choiceB.display();
-        choiceB.buttonDisplay();
-
-        if (choiceA.isPressed()) {
-            score++;
-            choiceA.disappear();
-            choiceB.disappear();
-            runEnding = true;
-          
+        if (nextChoice == 1) {
+            choiceOne();
+            // make some sort of marker for wait time to start 
         }
-        else if (choiceB.isPressed()) {
-            score--;
-            choiceA.disappear();
-            choiceB.disappear();
-           
+
+        else if (nextChoice == 2 && !waitTime) {
+            choiceTwo();
         }
+
+        else if (nextChoice == 3 && !waitTime) {
+            choiceThree();
+        }
+
+        else if (nextChoice == 4 && !waitTime) {
+            choiceFour();
+        }
+
+        else if (nextChoice == 5 && !waitTime) {
+            choiceFive();
+        }
+  
+    }
+    
+    if (wait == 5) {
+        waitTime = false;
+        wait = 0;
     }
 
-    if (runEnding) {
-        print("working");
-        if (score > 0) {
-            good_dialogue.run();
-        }
+    if (nextChoice = 6) {
+        //run the ending
 
+        if (score > 0) {
+            //run good ending 
+            good_dialogue.run()
+        }
         else if (score < 0) {
+            //run bad ending 
             bad_dialogue.run();
         }
     }
   
-
-
-    //if (timer == 0) {
-    //    my_dialogue.display();
-    //}
-
-    //else if (timer == 5) {
-    //    my_dialogue.disappear();
-    //}
-
-    //else if (timer == 10) {
-    //    my_dialogue.next_line(1);
-    //    my_dialogue.display();
-    //}
-
-    //else if (timer == 15) {
-    //    my_dialogue.disappear();
-    //}
-
-    //else if (timer == 20) {
-
-    //    my_dialogue.next_line(2);
-    //    my_dialogue.display();
-    //}
-
-    //eyes.side_look();
-
-    //if (timer > 25) {
-    //    eyes.disappear();
-
-    //}
-    //textSize(50);
-    //fill(255);
-    //text("Which is one is the imposter?", 160, 250);
-    //choiceA.display();
-    //choiceA.buttonDisplay();
-    //choiceB.display();
-    //choiceB.buttonDisplay();
-
-    //if (choiceA.isPressed()) {
-    //    score++;
-    //    choiceA.disappear();
-    //    choiceB.disappear();
-    //}
-    //else if (choiceB.isPressed()) {
-    //    score--;
-    //    choiceA.disappear();
-    //    choiceB.disappear();
-    //}
-
-    //if (score > 0) {
-    //    good_dialogue.run();
-    //}
-
-    //else if (score < 0) {
-    //    bad_dialogue.run();
-    //}
-    
-  /*  }*/
-
-    //if (timer > 30) {
-    //    eyes.disappear();
-    //    // sceneOne
-    //    choiceA.display();
-    //}
-
-  
-    
 }
 
 
-class Eyes {
-    constructor(x,y) {
-        this.x = x;
-        this.y = y;
+function choiceOne() {
+    textSize(50);
+    fill(255);
+    text("Which is one is the imposter?", 160, 250);
+
+    //choice A
+    photoA.display();
+    photoA.runButton();
+    //choice B
+    photoB.display();
+    photoB.runButton();
+
+    if (photoA.pressed()) {
+        score--;
+        photoA.disappear();
+        photoB.disappear();
+        nextChoice = 2;
+        waitTime = true;
     }
-
-    // eye pupils are supposed to move
-    // eyes have to disapper or change position entirely
-
-    //default display
-
-    run() {
-
-        if (timer == displayTime) {
-            this.side_look();
-        }
-
-        if (timer == 51) {
-            this.disappear();
-        }
-
+    else if (photoB.pressed()) {
+        score++;
+        photoA.disappear();
+        photoB.disappear();
+       
+       
     }
-    display() {
-        noStroke();
-        fill(255);
-        ellipse(this.x, this.y, 100, 50); // left(50, 100), right(150,100)
-        triangle(this.x - 60, this.y, this.x - 35, this.y - 18, this.x - 35, this.y + 18);
-        triangle(this.x + 60, this.y, this.x + 35, this.y - 18, this.x + 35, this.y + 18);
-        fill(0);
-        ellipse(this.x, this.y, 55);
-
-        noStroke();
-        fill(255);
-        ellipse(this.x + 150, this.y, 100, 50); // left(50, 100), right(150,100)
-        triangle(this.x + 90, this.y, this.x + 115, this.y - 18, this.x + 115, this.y + 18);
-        triangle(this.x+210, this.y, this.x + 185, this.y - 18, this.x + 185, this.y + 18);
-        fill(0);
-        ellipse(this.x + 150, this.y, 55);
-
-        //stroke(255, 0, 0);
-        //line(40,100, 160, 100);
-    }
-
-    // display eyes looking to the side
-    side_look() {
-        noStroke();
-        fill(255);
-        ellipse(this.x, this.y, 100, 50); // left(50, 100), right(150,100)
-        triangle(this.x - 60, this.y, this.x - 35, this.y - 18, this.x - 35, this.y + 18);
-        triangle(this.x + 60, this.y, this.x + 35, this.y - 18, this.x + 35, this.y + 18);
-        fill(0);
-        ellipse(this.x - 20, this.y, 55);
-
-        noStroke();
-        fill(255);
-        ellipse(this.x + 150, this.y, 100, 50); // left(50, 100), right(150,100)
-        triangle(this.x + 90, this.y, this.x + 115, this.y - 18, this.x + 115, this.y + 18);
-        triangle(this.x + 210, this.y, this.x + 185, this.y - 18, this.x + 185, this.y + 18);
-        fill(0);
-        ellipse(this.x + 130, this.y, 55);
-    }
-
-    disappear() {
-        background(0);
-    }
-}
-
-// will display guide's dialogue across the screen
-class Dialogue {
-    // I want dialogue text to appear slowly on the screen, letter by letter, as if
-    // guide is talking in real time
-
-    //maybe also animate text as if its moving in space/ floating animation
-
-    constructor(dialogue) { // array of strings for dialogue
-        this.dialogue_arr = dialogue; // array dialogue
-        this.idx = 0;
-        this.line = this.dialogue_arr[0]; // string from dialogue
-    }
-
-    // make each letter of text appear on screen
-    // I want to make the dialogue disappear after some time
-
-    // display text
-    // hide text
-    // timing for text
-
-    run() {
-        // frameCount is kinda difficult to use, let me tryh working with time (seconds)
-
-        if (timer == displayTime) {
-            this.display();
-            displayTime += 5;
-        }
-
-        if (timer == disappearTime) {
-            this.disappear();
-            idx++;
-            this.next_line(idx);
-            disappearTime += 5; 
-            
-        }
-    }
-    // display new line every 5 seconds
-    display() {
-        textSize(50);
-        fill(255);
-        text(this.line, 100, 700);
-    }
-
-    //maybe try disappear by making background = 0 or resetting the background -->use matrix
-    disappear() {
-        background(0);
-    }
-
-    //maybe try using booleans
-
-    next_line(my_idx) {
-        this.line = this.dialogue_arr[my_idx];
-    }
-}
-
-
-class Photo {
-
-    constructor(my_img, x, y,alpha) {
-        this.img = my_img;
-        this.xPos = x;
-        this.yPos = y;
-        this.letter = alpha;
-        this.buttonPressed = false;
-    }
-
-    display() {
-        this.img.resize(256, 256);
-        image(this.img, this.xPos, this.yPos);
-
-    }
-
-    buttonDisplay() {
-        noStroke();
-        fill(255);
-        rect(this.xPos + 80, this.yPos + 300, 75, 100);
-        textSize(50);
-        fill(0);
-        text(this.letter, this.xPos + 100, this.yPos + 365);
-    }
-
-    //if button is pressed return  true
-    onButton() {
-        if (mouseX > this.xPos + 80 & mouseX < this.xPos + 155
-            && mouseY > this.yPos + 300 && mouseY < this.yPos + 400) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    setPressed(bool) {
-        this.buttonPressed = bool;
-    }
-
-    isPressed() {
    
-        return this.buttonPressed;
+}
+//create all choices 
+function choiceTwo() {
+    textSize(50);
+    fill(255);
+    text("Which is one is the imposter?", 160, 250);
+
+    //choice A
+    photoC.display();
+    photoC.runButton();
+    //choice B
+    photoD.display();
+    photoD.runButton();
+
+    if (photoC.pressed()) {
+        score--;
+        photoC.disappear();
+        photoD.disappear();
+        nextChoice = 3;
+        waitTime = true;
+       
     }
-
-    disappear() {
-        background(0);
+    else if (photoD.pressed()) {
+        score++;
+        photoC.disappear();
+        photoD.disappear();
     }
-
-
 
 }
 
-function incTime() {
-    timer++;
-    print(timer);
+function choiceThree() {
+    textSize(50);
+    fill(255);
+    text("Which is one is the imposter?", 160, 250);
+
+    //choice A
+    photoE.display();
+    photoE.runButton();
+    //choice B
+    photoF.display();
+    photoF.runButton();
+
+    if (photoE.pressed()) {
+        score--;
+        photoE.disappear();
+        photoF.disappear();
+        nextChoice = 4;
+        waitTime = true;
+
+    }
+    else if (photoF.pressed()) {
+        score++;
+        photoE.disappear();
+        photoF.disappear();
+
+    }
+
+}
+
+function choiceFour() {
+    textSize(50);
+    fill(255);
+    text("Which is one is the imposter?", 160, 250);
+
+    //choice A
+    photoG.display();
+    photoG.runButton();
+    //choice B
+    photoH.display();
+    photoH.runButton();
+
+    if (photoG.pressed()) {
+        score--;
+        photoG.disappear();
+        photoH.disappear();
+        nextChoice = 5;
+        waitTime = true;
+
+
+    }
+    else if (photoH.pressed()) {
+        score++;
+        photoG.disappear();
+        photoH.disappear();
+
+    }
+}
+
+function choiceFive() {
+    textSize(50);
+    fill(255);
+    text("Which is one is the imposter?", 160, 250);
+
+    //choice A
+    photoI.display();
+    photoI.runButton();
+    //choice B
+    photoJ.display();
+    photoJ.runButton();
+
+    if (photoI.pressed()) {
+        score--;
+        photoI.disappear();
+        photoJ.disappear();
+        nextChoice = 6;
+        waitTime = true;
+
+       
+    }
+    else if (photoJ.pressed()) {
+        score++;
+        photoI.disappear();
+        photoJ.disappear();
+
+    }
 
 }
 
 
-function mousePressed() {
-    if (choiceA.onButton()) {
-        choiceA.setPressed(true);
-    }
-    if (choiceB.onButton()) {
-        choiceB.setPressed(true);
-    }
-}
-/*text(this.dialogue_arr[1], 100, 700);*/
-        //let currFrameCount = 0;
-        //let new_text;
-
-        //let newLine = this.dialogue_arr[this.idx];
-        //if (frameCount % 30 == 0) {
-        //    currFrameCount = frameCount;
-        //    textSize(50);
-        //    fill(255);
-        //    new_text = text(newLine, 100, 700);
-
-        //}
-        //print(currFrameCount);
-        //if (frameCount == currFrameCount + 100) {
-        //    print("working");
-        //    fill(0);
-        //    new_text;
-        //    this.idx++;
-        //    if (this.idx == this.dialogue_arr.length) {
-        //        this.idx = this.dialogue_arr.length;
-        //    }
-        //}
+// additional things I want to add
+// a new cursor
+//show animation of universe tear
+//revamp all code so that it utlizes p5 play
+// things for p5.play: A or B buttons, maybe eyes --> for button: display, check if on button
+//      check if pressed, disappear
