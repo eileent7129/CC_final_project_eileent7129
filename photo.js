@@ -5,15 +5,16 @@ class Photo {
         this.img = my_img;
         this.xPos = x;
         this.yPos = y;
-        this.myButton = new Button(this.xPos + 120, this.yPos + 350, alpha);
+        this.myButton = new Button(this.xPos + this.img.width/4, this.yPos + 600, alpha);
         this.buttonPressed = false;
     }
 
     display() {
-        this.img.resize(256, 256);
+        this.img.resize(512, 512);
         image(this.img, this.xPos, this.yPos);
         this.myButton.display();
         this.runButton();
+        print(this.img.width/2);
     }
 
     //this needs to be called in setup fuction
@@ -56,10 +57,10 @@ class Button {
 
     display() {
         this.my_sprite.visible = true;
-        this.my_sprite.pos = { x: this.xPos, y: this.yPos }; 
+        this.my_sprite.pos = { x: this.xPos, y: this.yPos };  
         this.my_sprite.width = 75;
         this.my_sprite.height = 100;
-        this.my_sprite.textSize = 50;
+        this.my_sprite.textSize = 40;
         this.my_sprite.text = this.letter;
         this.my_sprite.textColor = 'black';
         this.my_sprite.color = color(255);
@@ -71,7 +72,7 @@ class Button {
     mouseOnButton() {
         
         if (mouseX > this.xPos - 37 & mouseX < this.xPos + 37 && mouseY > this.yPos - 50 && mouseY < this.yPos + 50) {
-            print(true);
+            
             return true;
         }
 
@@ -87,15 +88,3 @@ class Button {
 
 }
 
-
-function incTime() {
-    timer++;
-    print(timer);
-}
-
-function incWait() {
-    if (waitTime) {
-        wait++;
-    }
-    print(wait);
-}

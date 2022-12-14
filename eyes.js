@@ -10,17 +10,14 @@ class Eyes {
 
     //default display
 
-    run() {
+    run(bool) {
+        this.side_look();
 
-        if (timer == displayTime) {
-            this.side_look();
+        if (bool) {
+            this.display();
         }
-
-        if (timer == 51) {
-            this.disappear();
-        }
-
     }
+
     display() {
         noStroke();
         fill(255);
