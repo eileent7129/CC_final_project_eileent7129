@@ -9,11 +9,10 @@ let theFont;
 let my_dialogue;
 let good_dialogue;
 let bad_dialogue;
-let timer = 0;
 let wait = 0;
 let idx = 0;
 
-
+// for images
 let imgA1;
 let imgB1;
 let imgA2;
@@ -25,6 +24,7 @@ let imgB4;
 let imgA5;
 let imgB5;
 
+// for photo class
 let photoA;
 let photoB;
 let photoC;
@@ -36,31 +36,28 @@ let photoH;
 let photoI;
 let photoJ;
 
-let runEnding = false;
+// set up variables 
 let nextChoice = 0;
-let nextIdx = 0;
 let waitTime = false;
 let enterDown = false;
 let enterReleased = false;
 let run_good = false;
 let run_ending = false;
-let change = false;
-let speakLine = false;
-let disappear = false;
 let spacePressed = false;
 let ready = false;
 let incScore = false;
 let decScore = false;
 let song;
 let score = 1;
+let particles;
 
 function preload() {
-    my_text = loadStrings('data/dialogue_1.txt'); // array of strings // dialogue finishes at time = 51
-    theFont = loadFont('data/font_1.ttf');
+    my_text = loadStrings('data/dialogue_1.txt'); // array of strings 
+    theFont = loadFont('data/font_1.ttf'); // got font from google fonts
 
     good_ending = loadStrings('data/good_ending.txt'); // good ending dialogue
     bad_ending = loadStrings('data/bad_ending.txt'); //bad ending dialogue
-    best_ending = loadStrings('data/best_dialogue.txt')
+    best_ending = loadStrings('data/best_dialogue.txt') // best ending dialogue
 
     imgA1 = loadImage('data/photo_a_1.jpeg');
     imgB1 = loadImage('data/photo_b_1.jpeg');
@@ -77,7 +74,7 @@ function preload() {
     imgA5 = loadImage('data/photo_a_5.jpeg');
     imgB5 = loadImage('data/photo_b_5.jpeg');
 
-    song = loadSound('data/song.wav');
+    song = loadSound('data/song.wav'); // got sound from freesound.org
 }
 
 function setup() {
@@ -99,64 +96,62 @@ function setup() {
     best_dialogue = new Dialogue(best_ending);
     best_dialogue.speechSetup();
 
-    //if (runEnding) {
-    //    timer = 0;
-    //}
-
-    setInterval(incTime, 1000);
+   
     setInterval(incWait, 1000);
 
-
+    //pair one
     photoA = new Photo(imgA1, round(width / 6), round(height / 3), false); // real human, incorrect choice
-    //photoA.buttonSetup();
-
     photoB = new Photo(imgB1, round(width * (3 / 6)), round(height / 3), true); // fake human, correct choice
-    //photoB.buttonSetup();
 
     //switch
+    //pair two
     photoC = new Photo(imgA2, round(width * (3 / 6)), round(height / 3), false); // real human, incorrect choice
-    //photoC.buttonSetup();
-
     photoD = new Photo(imgB2, round(width / 6), round(height / 3), true); // fake human, correct choice
-    //photoD.buttonSetup();
 
     //switch
+    //pair three
     photoE = new Photo(imgA3, round(width * (3 / 6)), round(height / 3), false); //real human, incorrect choice
-    //photoE.buttonSetup();
-
     photoF = new Photo(imgB3, round(width / 6), round(height / 3), true); // fake human, correct choice
-    //photoF.buttonSetup();
 
-    
+    //pair four
     photoG = new Photo(imgA4, round(width / 6), round(height / 3), false); // real human, incorrect choice
-    //photoG.buttonSetup();
-
     photoH = new Photo(imgB4, round(width * (3 / 6)), round(height / 3), true); // fake human, correct choice
-    //photoH.buttonSetup();
 
     //switch
+    //pair five
     photoI = new Photo(imgA5, round(width * (3 / 6)), round(height / 3), false); // real human, incorrect choice
-    //photoI.buttonSetup();
-
     photoJ = new Photo(imgB5, round(width / 6), round(height / 3), true); // fake human, correct choice
-    //photoJ.buttonSetup();
 
+    //play background music on loop
     song.play();
     song.loop();
+
+    // from particle library, creates space effect
+    let t = {
+        name: "my_particles",
+        colors: ["white"],
+        lifetime: 9000,
+        angle: [0, 360],
+        gravity: 0.0001,
+        speed: 0.6,
+       /* size: [2, 5],*/
+        x: 0.5,
+        y: 0.5
+    }
+    particles = new Fountain(null, t);
 
 }
 
 function draw() {
-    
+    //press enter to start 
     if (!ready) {
         noStroke();
         textSize(20);
         fill(255);
         text("Press Enter key", 575, 200);
-       
+      
     }
 
-    
     // everytime enter is pressed eyes change 
     /*eyes.run(change);*/
     my_dialogue.run();
@@ -201,6 +196,8 @@ function draw() {
        
     }
 
+    
+    //once all the choices have been made, run the ending based on the choices
     if (run_ending) {
         if (score == 5) {
             best_dialogue.run();
@@ -208,6 +205,7 @@ function draw() {
 
             if (best_dialogue.finished()) {
                 eyes.disappear();
+                bestScreen();
             }
         }
         else if (score > 0 && score != 5) {
@@ -216,6 +214,7 @@ function draw() {
 
             if (good_dialogue.finished()) {
                 eyes.disappear();
+                goodScreen();
             }
         }
         else if (score < 0) {
@@ -224,18 +223,26 @@ function draw() {
 
             if (bad_dialogue.finished()) {
                 eyes.disappear();
+                badScreen();
             }
         }
     }
 
-    if (wait == 2) {
+    //loading screen between each suspect
+    if (waitTime && nextChoice != 6) {
+        loadScreen();
+    }
+
+    // wait time for in between displaying pairs of suspects
+    if (wait == 5) {
         waitTime = false;
         wait = 0;
     }
 }
 
-//stop doing things based on time
+//Note: stop doing things based on time, doesn't work :')
 
+//create all choices 
 function choiceOne() {
     noStroke();
     textSize(40);
@@ -250,7 +257,7 @@ function choiceOne() {
     //when choice is pressed, light up green or red, 
     // press space bar to disappear and move on to next choice
 
-    if (photoA.pressed()) {
+    if (photoA.pressed()) { 
         decScore = true;
         //score = -1;
         noStroke();
@@ -282,7 +289,7 @@ function choiceOne() {
         }
     }
 }
-//create all choices 
+
 function choiceTwo() {
     noStroke();
     textSize(40);
@@ -291,10 +298,8 @@ function choiceTwo() {
 
     //choice A
     photoC.display();
-   /* photoC.runButton();*/
     //choice B
     photoD.display();
-  /*  photoD.runButton();*/
 
     if (photoC.pressed()) {
         decScore = true;
@@ -332,10 +337,10 @@ function choiceThree() {
 
     //choice A
     photoE.display();
-   /* photoE.runButton();*/
+  
     //choice B
     photoF.display();
-   /* photoF.runButton();*/
+ 
 
     if (photoE.pressed()) {
         decScore = true;
@@ -377,10 +382,10 @@ function choiceFour() {
 
     //choice A
     photoG.display();
-  /*  photoG.runButton();*/
+ 
     //choice B
     photoH.display();
-  /*  photoH.runButton();*/
+ 
 
     if (photoG.pressed()) {
         decScore = true;
@@ -418,10 +423,10 @@ function choiceFive() {
 
     //choice A
     photoI.display();
-    /*photoI.runButton();*/
+    
     //choice B
     photoJ.display();
-   /* photoJ.runButton();*/
+  
 
     if (photoI.pressed()) {
         decScore = true;
@@ -454,18 +459,16 @@ function choiceFive() {
 }
 
 function mousePressed() {
-
     if (decScore) {
         print("dec working");
         score -= 1;
         print("score:"); print(score);
-    //    decScore = false;
+   
     }
     else if (incScore) {
         print("inc working");
         score += 1;
         print("score:"); print(score);
-    //    incScore = false;
     }
 }
 
@@ -545,11 +548,6 @@ function speechLoaded() {
     my_dialogue.loadSpeech();
 }
 
-
-function incTime() {
-    timer++;
-}
-
 function incWait() {
     if (waitTime) {
         wait++;
@@ -557,38 +555,76 @@ function incWait() {
     }
 
 }
+// if wait time, present load screen
+function loadScreen() {
+  
+    noStroke();
+    textSize(40);
+    fill(255);
+    text("Retrieving suspects", 300, 500);
+
+    if (wait == 1) {
+        noStroke();
+        textSize(40);
+        fill(255);
+        text(".", 1050, 500);
+    }
+
+    if (wait == 2) {
+        noStroke();
+        textSize(40);
+        fill(255);
+        text(".", 1060, 500);
+    }
+
+    if (wait == 3) {
+        noStroke();
+        textSize(40);
+        fill(255);
+        text(".", 1070, 500);
+    }
+
+    if (wait == 4) {
+        noStroke();
+        textSize(40);
+        fill(255);
+        text(".", 1080, 500);
+    }
+}
+
+function bestScreen() {
+    // add finalizing choices option
+    space();
+    noStroke();
+    textSize(40);
+    fill(255);
+    text("Best Ending", 550, 500);
+}
+
+function badScreen() {
+    space();
+    noStroke();
+    textSize(40);
+    fill(255);
+    text("Bad Ending", 550, 500);
+}
+
+function goodScreen() {
+    space();
+    noStroke();
+    textSize(40);
+    fill(255);
+    text("Good Ending", 550, 500);
+}
 
 
-// additional things I want to add
-// a new cursor
-//show animation of universe tear
-//revamp all code so that it utlizes p5 play
-// things for p5.play: A or B buttons, maybe eyes --> for button: display, check if on button
-//      check if pressed, disappear
-// start each dialoguw with ... to avoid speehc not playing at first
 
-//things to finish tonight
-// fix dialogue text files --> try again after bad ending
-// create loading screen between choices 
-// add background sound
-
-// complete for project
-// add key directions **
-// fix eyes
-// maybe try again button
-// background graphics
-// fix choices and colors **
-// fix background music
-
-
-//... 0
-//Hello. 1
-//Something terrible has happened. // eyes squint 2
-//There's been a tear in the multiverse. 3
-//Imposters of humanity have entered your world. // eyes look forward 4
-//There are five pairs of suspects. 5
-//You must figure out who the imposter is. 6
-//Be careful. // eyes squint 7
-//There will be consequences if you make the wrong choice. // eyes look forward 8
-//Good luck. 9
-
+function space() {
+    background(0);
+    particles.Draw();
+    particles.Create();
+    particles.Step();
+    noStroke();
+   /* text(particles.length, width / 2, 20);*/
+    stroke(0);
+}
