@@ -13,6 +13,7 @@ class Dialogue {
         this.line = this.dialogue_arr[0]; // string from dialogue
         this.done = false;
         this.stop = false;
+        this.speech;
        
     }
 
@@ -28,27 +29,31 @@ class Dialogue {
 
         //if enter key is pressed, display line
         if (!(this.finished())) {
-            this.display();
-          
-           /* this.talk();*/
-        
-            if (enterDown) {
-                this.disappear();
-                this.next_line(this.idx);
+            //when line is displayed, speech should be played
+
+
+            if (this.idx == 0) {
                 this.display();
             }
 
+            else if (this.idx != 0 && enterReleased) {
+                this.disappear();
+                this.display();
+            }
+
+
             if (this.idx == this.dialogue_arr.length) {
                 this.done = true;
+                this.disappear();
             }
         }
-
+      
     }
 
     display() {
-        textSize(30);
+        textSize(25);
         fill(255);
-        text(this.line, 90, 700);
+        text(this.line, 70, 700);
     }
 
     //maybe try disappear by making background = 0 or resetting the background -->use matrix
@@ -57,7 +62,10 @@ class Dialogue {
     }
 
     inc_idx() {
-        this.idx++;
+        if (this.idx != this.dialogue_arr.length) {
+            this.idx++;
+        }
+        
     }
 
     next_line(my_idx) {
@@ -72,17 +80,28 @@ class Dialogue {
         return this.idx;
     }
 
+    //speech for dialogue, cannot be in draw loop
     talk() {
-        this.speech.speak(this.line);
+        if (this.idx == 0) {
+            this.speech.speak(this.line);
+        }
+
+        this.next_line(this.idx);
+
+        if (this.idx != this.dialogue_arr.length) {
+            this.speech.speak(this.line);
+        }
        
     }
 
-   stop_talk() {
-        this.speech.stop();
-    }
     speechSetup() {
         this.speech = new p5.SpeechRec('en-US');
-        this.speech = new p5.Speech();
-        
+        this.speech = new p5.Speech();  
     }
+
+    loadSpeech() {
+        this.speech.speak(this.line);
+    }
+
+
 }

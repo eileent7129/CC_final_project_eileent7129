@@ -5,29 +5,37 @@ class Photo {
         this.img = my_img;
         this.xPos = x;
         this.yPos = y;
-        this.myButton = new Button(this.xPos + this.img.width/4, this.yPos + 600, alpha);
+       /* this.myButton = new Button(this.xPos + this.img.width/4, this.yPos + 600, alpha);*/
         this.buttonPressed = false;
     }
 
     display() {
-        this.img.resize(512, 512);
+
+        applyMatrix();
+        noStroke();
+        this.img.resize(450, 450);
         image(this.img, this.xPos, this.yPos);
-        this.myButton.display();
-        this.runButton();
-        print(this.img.width/2);
+       /* this.myButton.display();*/
+        /*this.runButton();*/
+        resetMatrix();
+
+        applyMatrix();
+        this.lightUp();
+        resetMatrix();
     }
 
     //this needs to be called in setup fuction
-    buttonSetup() {
-        this.myButton.setup();
-    }
+    //buttonSetup() {
+    //    this.myButton.setup();
+    //}
 
     //check if button is pressed, if button is pressed return true
-    runButton() {
-        if (this.myButton.mouseOnButton() && mouseIsPressed) {
-            this.buttonPressed = true;
-        }
-    }
+    //runButton() {
+    //    if (this.myButton.mouseOnButton() && mouseIsPressed) {
+    //        this.buttonPressed = true;
+    //    }
+    //}
+
     disappear() {
         background(0);
         this.myButton.disappear();
@@ -38,53 +46,88 @@ class Photo {
         return this.buttonPressed;
     }
 
-}
-
-class Button {
-
-    constructor(x, y, letter) {
-        this.xPos = x; // x coordinate of center of sprite
-        this.yPos = y; // y coordinate of center of sprite
-        this.letter = letter;
-        this.my_sprite;
-        this.pressed = false;
+    lightUp() {
+        if (this.mouseOver()) {
+            this.choiceDisplay();
+        }
+        else {
+            this.noChoice();
+        }
     }
 
-    setup() {
-        this.my_sprite = new Sprite();
-        this.my_sprite.visible = false;
-    }
-
-    display() {
-        this.my_sprite.visible = true;
-        this.my_sprite.pos = { x: this.xPos, y: this.yPos };  
-        this.my_sprite.width = 75;
-        this.my_sprite.height = 100;
-        this.my_sprite.textSize = 40;
-        this.my_sprite.text = this.letter;
-        this.my_sprite.textColor = 'black';
-        this.my_sprite.color = color(255);
-       
-    }
-
-    // if button pressed, disappear
-
-    mouseOnButton() {
-        
-        if (mouseX > this.xPos - 37 & mouseX < this.xPos + 37 && mouseY > this.yPos - 50 && mouseY < this.yPos + 50) {
-            
+    mouseOver() {
+        if (mouseX > this.xPos && mouseX < this.xPos + 450
+            && mouseY > this.yPos && mouseY < this.yPos + 450) {
             return true;
         }
-
         else {
+          
             return false;
         }
     }
 
-    disappear() {
-        this.my_sprite.visible = false;
-        background(0);
+    choiceDisplay() {
+        noFill();
+        strokeWeight(5);
+        stroke(255, 247, 0);
+        rect(this.xPos, this.yPos, this.img.width, this.img.height);
+    }
+
+    noChoice() {
+        noFill();
+        strokeWeight(5);
+        stroke(255);
+        rect(this.xPos, this.yPos, this.img.width, this.img.height);
     }
 
 }
+
+//class Button {
+
+//    constructor(x, y, letter) {
+//        this.xPos = x; // x coordinate of center of sprite
+//        this.yPos = y; // y coordinate of center of sprite
+//        this.letter = letter;
+//        this.my_sprite;
+//        this.pressed = false;
+//    }
+
+//    setup() {
+//        this.my_sprite = new Sprite();
+//        this.my_sprite.visible = false;
+//    }
+
+//    display() {
+//        noStroke();
+//        this.my_sprite.visible = true;
+//        this.my_sprite.pos = { x: this.xPos, y: this.yPos };  
+//        this.my_sprite.width = 75;
+//        this.my_sprite.height = 100;
+//        this.my_sprite.textSize = 40;
+//        this.my_sprite.text = this.letter;
+//        this.my_sprite.textColor = 'black';
+//        this.my_sprite.color = color(255);
+       
+//    }
+
+//    // if button pressed, disappear
+
+//    mouseOnButton() {
+        
+//        if (mouseX > this.xPos - 37 & mouseX < this.xPos + 37 && mouseY > this.yPos - 50 && mouseY < this.yPos + 50) {
+            
+//            return true;
+//        }
+
+//        else {
+//            return false;
+//        }
+//    }
+
+//    disappear() {
+//        this.my_sprite.visible = false;
+//        background(0);
+//    }
+
+//}
 

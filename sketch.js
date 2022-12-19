@@ -55,6 +55,7 @@ let enterReleased = false;
 let run_good = false;
 let run_ending = false;
 let change = false;
+let speakLine = false;
 
 function preload() {
     my_text = loadStrings('data/dialogue_1.txt'); // array of strings // dialogue finishes at time = 51
@@ -80,7 +81,7 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
+    createCanvas(windowWidth, 1000);
     textFont(theFont);
     background(0);
     xPos = round(width / 2 - 100);
@@ -88,8 +89,10 @@ function setup() {
     eyes = new Eyes(xPos, yPos);
     my_dialogue = new Dialogue(my_text);
     my_dialogue.speechSetup();
+
     good_dialogue = new Dialogue(good_ending);
     good_dialogue.speechSetup();
+
     bad_dialogue = new Dialogue(bad_ending);
     bad_dialogue.speechSetup();
 
@@ -101,34 +104,34 @@ function setup() {
     setInterval(incWait, 1000);
 
     photoA = new Photo(imgA1, round(width / 6), round(height / 3), "A"); // real
-    photoA.buttonSetup();
+    //photoA.buttonSetup();
 
     photoB = new Photo(imgB1, round(width * (3 / 6)), round(height / 3), "B"); // fake
-    photoB.buttonSetup();
+    //photoB.buttonSetup();
 
     photoC = new Photo(imgA2, round(width / 6), round(height / 3), "A"); // real
-    photoC.buttonSetup();
+    //photoC.buttonSetup();
 
     photoD = new Photo(imgB2, round(width * (3 / 6)), round(height / 3), "B"); // fake
-    photoD.buttonSetup();
+    //photoD.buttonSetup();
 
     photoE = new Photo(imgA3, round(width / 6), round(height / 3), "A"); //real
-    photoE.buttonSetup();
+    //photoE.buttonSetup();
 
     photoF = new Photo(imgB3, round(width * (3 / 6)), round(height / 3), "B"); // fake
-    photoF.buttonSetup();
+    //photoF.buttonSetup();
 
     photoG = new Photo(imgA4, round(width / 6), round(height / 3), "A"); // real
-    photoG.buttonSetup();
+    //photoG.buttonSetup();
 
     photoH = new Photo(imgB4, round(width * (3 / 6)), round(height / 3), "B"); // fake
-    photoH.buttonSetup();
+    //photoH.buttonSetup();
 
     photoI = new Photo(imgA5, round(width / 6), round(height / 3), "A"); // real
-    photoI.buttonSetup();
+    //photoI.buttonSetup();
 
     photoJ = new Photo(imgB5, round(width * (3 / 6)), round(height / 3), "B"); // fake
-    photoJ.buttonSetup();
+    //photoJ.buttonSetup();
    
 }
 
@@ -142,12 +145,12 @@ function draw() {
 
     
     my_dialogue.run();
-    eyes.run(change);
+    /*eyes.run(change);*/
     
 
     if (my_dialogue.finished()) {
         /*good_dialogue.run();*/
-        eyes.disappear();
+        //eyes.disappear();
 
         if (nextChoice == 0) {
             waitTime = true;
@@ -195,16 +198,17 @@ function draw() {
 
 
 function choiceOne() {
-    textSize(50);
+    noStroke();
+    textSize(40);
     fill(255);
-    text("Which one is the imposter?", 250, 250);
+    text("Which one is the imposter?", 220, 250);
 
     //choice A
     photoA.display();
-    photoA.runButton();
+    /*photoA.runButton();*/
     //choice B
     photoB.display();
-    photoB.runButton();
+    /*photoB.runButton();*/
 
     if (photoA.pressed()) {
         score--;
@@ -225,16 +229,17 @@ function choiceOne() {
 }
 //create all choices 
 function choiceTwo() {
-    textSize(50);
+    noStroke();
+    textSize(40);
     fill(255);
-    text("Which one is the imposter?", 250, 250);
+    text("Which one is the imposter?", 220, 250);
 
     //choice A
     photoC.display();
-    photoC.runButton();
+   /* photoC.runButton();*/
     //choice B
     photoD.display();
-    photoD.runButton();
+  /*  photoD.runButton();*/
 
     if (photoC.pressed()) {
         score--;
@@ -255,16 +260,17 @@ function choiceTwo() {
 }
 
 function choiceThree() {
-    textSize(50);
+    noStroke();
+    textSize(40);
     fill(255);
-    text("Which one is the imposter?", 250, 250);
+    text("Which one is the imposter?", 220, 250);
 
     //choice A
     photoE.display();
-    photoE.runButton();
+   /* photoE.runButton();*/
     //choice B
     photoF.display();
-    photoF.runButton();
+   /* photoF.runButton();*/
 
     if (photoE.pressed()) {
         score--;
@@ -286,16 +292,17 @@ function choiceThree() {
 }
 
 function choiceFour() {
-    textSize(50);
+    noStroke();
+    textSize(40);
     fill(255);
-    text("Which one is the imposter?", 250, 250);
+    text("Which one is the imposter?", 220, 250);
 
     //choice A
     photoG.display();
-    photoG.runButton();
+  /*  photoG.runButton();*/
     //choice B
     photoH.display();
-    photoH.runButton();
+  /*  photoH.runButton();*/
 
     if (photoG.pressed()) {
         score--;
@@ -316,16 +323,17 @@ function choiceFour() {
 }
 
 function choiceFive() {
-    textSize(50);
+    noStroke();
+    textSize(40);
     fill(255);
-    text("Which one is the imposter?", 250, 250);
+    text("Which one is the imposter?", 220, 250);
 
     //choice A
     photoI.display();
-    photoI.runButton();
+    /*photoI.runButton();*/
     //choice B
     photoJ.display();
-    photoJ.runButton();
+   /* photoJ.runButton();*/
 
     if (photoI.pressed()) {
         score--;
@@ -345,25 +353,16 @@ function choiceFive() {
         run_ending = true;
     }
 
-}
+} 
 
 function keyPressed() {
     if (keyCode == 13) {
         enterDown = true;
     }
 
-    
-}
-
-function keyReleased() {
-
-    if (enterDown == true) {
-        enterReleased = true;
+    if (enterDown) {
         my_dialogue.inc_idx();
-
-        //if (enterReleased) {
-        //    my_dialogue.stop_talk();
-        //}
+        enterReleased = false;
         if (run_ending) {
             if (score > 0) {
                 good_dialogue.inc_idx();
@@ -372,10 +371,37 @@ function keyReleased() {
             else if (score < 0) {
                 bad_dialogue.inc_idx();
             }
-            
+
         }
-       
     }
+}
+
+function keyReleased() {
+    if (enterDown) {
+        enterReleased = true;
+        enterDown = false;
+    }
+
+    if (enterReleased) {
+        if (!my_dialogue.finished()) {
+            my_dialogue.talk();
+        }
+        else {
+            if (run_ending) {
+                if (score > 0) {
+                    good_dialogue.talk();
+                }
+                else if (score < 0) {
+                    bad_dialogue.talk();
+                }
+            }
+        }
+        
+    }
+}
+
+function speechLoaded() {
+    my_dialogue.loadSpeech();
 }
 
 
@@ -387,7 +413,6 @@ function incWait() {
     if (waitTime) {
         wait++;
     }
-    print(wait);
 
 }
 
