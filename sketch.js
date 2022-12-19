@@ -161,18 +161,9 @@ function draw() {
     /*eyes.run(change);*/
     my_dialogue.run();
 
-    eyes.side_look();
+    eyes.run();
 
-    if (idx == 4) {
-        //eyes.disappear();
-        eyes.display();
-    }
 
-    
-
-    if (idx == 8) {
-        eyes.display();
-    }
     if (my_dialogue.finished()) {
         /*good_dialogue.run();*/
         eyes.disappear();
@@ -213,12 +204,27 @@ function draw() {
     if (run_ending) {
         if (score == 5) {
             best_dialogue.run();
+            eyes.side_look();
+
+            if (best_dialogue.finished()) {
+                eyes.disappear();
+            }
         }
         else if (score > 0 && score != 5) {
             good_dialogue.run();
+            eyes.side_look();
+
+            if (good_dialogue.finished()) {
+                eyes.disappear();
+            }
         }
         else if (score < 0) {
             bad_dialogue.run();
+            eyes.side_look();
+
+            if (bad_dialogue.finished()) {
+                eyes.disappear();
+            }
         }
     }
 
