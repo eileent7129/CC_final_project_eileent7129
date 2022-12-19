@@ -51,6 +51,7 @@ class Dialogue {
     }
 
     display() {
+        noStroke();
         textSize(25);
         fill(255);
         text(this.line, 70, 700);

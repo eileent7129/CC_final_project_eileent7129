@@ -4,6 +4,7 @@ let yPos;
 let my_text;
 let good_ending;
 let bad_ending;
+let best_ending;
 let theFont;
 let my_dialogue;
 let good_dialogue;
@@ -11,6 +12,7 @@ let bad_dialogue;
 let timer = 0;
 let wait = 0;
 let idx = 0;
+
 
 let imgA1;
 let imgB1;
@@ -23,14 +25,6 @@ let imgB4;
 let imgA5;
 let imgB5;
 
-////could turn these arrays into a class
-//let pairArray1 = [];
-//let pairArray2 = [];
-//let pairArray3 = [];
-//let pairArray4 = [];
-//let pairArray5 = [];
-//let imgArray = [];
-
 let photoA;
 let photoB;
 let photoC;
@@ -42,10 +36,6 @@ let photoH;
 let photoI;
 let photoJ;
 
-
-let score = 1;
-let displayTime = 3;
-let disappearTime = 6;
 let runEnding = false;
 let nextChoice = 0;
 let nextIdx = 0;
@@ -56,6 +46,13 @@ let run_good = false;
 let run_ending = false;
 let change = false;
 let speakLine = false;
+let disappear = false;
+let spacePressed = false;
+let ready = false;
+let incScore = false;
+let decScore = false;
+let song;
+let score = 1;
 
 function preload() {
     my_text = loadStrings('data/dialogue_1.txt'); // array of strings // dialogue finishes at time = 51
@@ -63,6 +60,7 @@ function preload() {
 
     good_ending = loadStrings('data/good_ending.txt'); // good ending dialogue
     bad_ending = loadStrings('data/bad_ending.txt'); //bad ending dialogue
+    best_ending = loadStrings('data/best_dialogue.txt')
 
     imgA1 = loadImage('data/photo_a_1.jpeg');
     imgB1 = loadImage('data/photo_b_1.jpeg');
@@ -78,6 +76,8 @@ function preload() {
 
     imgA5 = loadImage('data/photo_a_5.jpeg');
     imgB5 = loadImage('data/photo_b_5.jpeg');
+
+    song = loadSound('data/song.wav');
 }
 
 function setup() {
@@ -96,6 +96,9 @@ function setup() {
     bad_dialogue = new Dialogue(bad_ending);
     bad_dialogue.speechSetup();
 
+    best_dialogue = new Dialogue(best_ending);
+    best_dialogue.speechSetup();
+
     //if (runEnding) {
     //    timer = 0;
     //}
@@ -103,60 +106,82 @@ function setup() {
     setInterval(incTime, 1000);
     setInterval(incWait, 1000);
 
-    photoA = new Photo(imgA1, round(width / 6), round(height / 3), "A"); // real
+
+    photoA = new Photo(imgA1, round(width / 6), round(height / 3), false); // real human, incorrect choice
     //photoA.buttonSetup();
 
-    photoB = new Photo(imgB1, round(width * (3 / 6)), round(height / 3), "B"); // fake
+    photoB = new Photo(imgB1, round(width * (3 / 6)), round(height / 3), true); // fake human, correct choice
     //photoB.buttonSetup();
 
-    photoC = new Photo(imgA2, round(width / 6), round(height / 3), "A"); // real
+    //switch
+    photoC = new Photo(imgA2, round(width * (3 / 6)), round(height / 3), false); // real human, incorrect choice
     //photoC.buttonSetup();
 
-    photoD = new Photo(imgB2, round(width * (3 / 6)), round(height / 3), "B"); // fake
+    photoD = new Photo(imgB2, round(width / 6), round(height / 3), true); // fake human, correct choice
     //photoD.buttonSetup();
 
-    photoE = new Photo(imgA3, round(width / 6), round(height / 3), "A"); //real
+    //switch
+    photoE = new Photo(imgA3, round(width * (3 / 6)), round(height / 3), false); //real human, incorrect choice
     //photoE.buttonSetup();
 
-    photoF = new Photo(imgB3, round(width * (3 / 6)), round(height / 3), "B"); // fake
+    photoF = new Photo(imgB3, round(width / 6), round(height / 3), true); // fake human, correct choice
     //photoF.buttonSetup();
 
-    photoG = new Photo(imgA4, round(width / 6), round(height / 3), "A"); // real
+    
+    photoG = new Photo(imgA4, round(width / 6), round(height / 3), false); // real human, incorrect choice
     //photoG.buttonSetup();
 
-    photoH = new Photo(imgB4, round(width * (3 / 6)), round(height / 3), "B"); // fake
+    photoH = new Photo(imgB4, round(width * (3 / 6)), round(height / 3), true); // fake human, correct choice
     //photoH.buttonSetup();
 
-    photoI = new Photo(imgA5, round(width / 6), round(height / 3), "A"); // real
+    //switch
+    photoI = new Photo(imgA5, round(width * (3 / 6)), round(height / 3), false); // real human, incorrect choice
     //photoI.buttonSetup();
 
-    photoJ = new Photo(imgB5, round(width * (3 / 6)), round(height / 3), "B"); // fake
+    photoJ = new Photo(imgB5, round(width / 6), round(height / 3), true); // fake human, correct choice
     //photoJ.buttonSetup();
-   
+
+    song.play();
+    song.loop();
+
 }
 
 function draw() {
     
-    //background(0);
-   
-    /*  my_dialogue.run();*/
-
-    //Display the beginning dialogue, user will press enter ti display each line of dialogue
+    if (!ready) {
+        noStroke();
+        textSize(20);
+        fill(255);
+        text("Press Enter key", 575, 200);
+       
+    }
 
     
-    my_dialogue.run();
+    // everytime enter is pressed eyes change 
     /*eyes.run(change);*/
+    my_dialogue.run();
+
+    eyes.side_look();
+
+    if (idx == 4) {
+        //eyes.disappear();
+        eyes.display();
+    }
+
     
 
+    if (idx == 8) {
+        eyes.display();
+    }
     if (my_dialogue.finished()) {
         /*good_dialogue.run();*/
-        //eyes.disappear();
+        eyes.disappear();
 
         if (nextChoice == 0) {
             waitTime = true;
             nextChoice = 1;
         }
-       
+
         else if (nextChoice == 1 && !waitTime) {
             //waitTime = true;
             choiceOne();
@@ -178,11 +203,18 @@ function draw() {
         else if (nextChoice == 5 && !waitTime) {
             choiceFive();
         }
+
+        else if (nextChoice == 6 && !waitTime) {
+            run_ending = true;
+        }
        
     }
 
     if (run_ending) {
-        if (score > 0) {
+        if (score == 5) {
+            best_dialogue.run();
+        }
+        else if (score > 0 && score != 5) {
             good_dialogue.run();
         }
         else if (score < 0) {
@@ -190,12 +222,13 @@ function draw() {
         }
     }
 
-    if (wait == 5) {
+    if (wait == 2) {
         waitTime = false;
         wait = 0;
     }
 }
 
+//stop doing things based on time
 
 function choiceOne() {
     noStroke();
@@ -205,27 +238,43 @@ function choiceOne() {
 
     //choice A
     photoA.display();
-    /*photoA.runButton();*/
     //choice B
     photoB.display();
-    /*photoB.runButton();*/
+
+    //when choice is pressed, light up green or red, 
+    // press space bar to disappear and move on to next choice
 
     if (photoA.pressed()) {
-        score--;
-        photoA.disappear();
-        photoB.disappear();
-        nextChoice = 2;
-        waitTime = true;
+        decScore = true;
+        //score = -1;
+        noStroke();
+        textSize(30);
+        fill(255);
+        text("Press spacebar to continue", 350, 850);
+
+        if (spacePressed) {
+            nextChoice = 2;
+            waitTime = true;
+            photoA.disappear();
+            photoB.disappear();
+        }
+ 
     }
     else if (photoB.pressed()) {
-        score++;
-        photoA.disappear();
-        photoB.disappear();
-        nextChoice = 2;
-        waitTime = true;
-       
+        incScore = true;
+        //score = 1;
+        noStroke();
+        textSize(30);
+        fill(255);
+        text("Press spacebar to continue", 350, 850);
+        
+        if (spacePressed) {
+            nextChoice = 2;
+            waitTime = true;
+            photoA.disappear();
+            photoB.disappear();
+        }
     }
-   
 }
 //create all choices 
 function choiceTwo() {
@@ -242,21 +291,31 @@ function choiceTwo() {
   /*  photoD.runButton();*/
 
     if (photoC.pressed()) {
-        score--;
-        photoC.disappear();
-        photoD.disappear();
-        nextChoice = 3;
-        waitTime = true;
-       
+        decScore = true;
+        noStroke();
+        textSize(30);
+        fill(255);
+        text("Press spacebar to continue", 350, 850);
+        if (spacePressed) {
+            nextChoice = 3;
+            waitTime = true;
+            photoC.disappear();
+            photoD.disappear();
+        }
     }
     else if (photoD.pressed()) {
-        score++;
-        photoC.disappear();
-        photoD.disappear();
-        nextChoice = 3;
-        waitTime = true;
+        incScore = true;
+        noStroke();
+        textSize(30);
+        fill(255);
+        text("Press spacebar to continue", 350, 850);
+        if (spacePressed) {
+            nextChoice = 3;
+            waitTime = true;
+            photoC.disappear();
+            photoD.disappear();
+        }
     }
-
 }
 
 function choiceThree() {
@@ -273,22 +332,35 @@ function choiceThree() {
    /* photoF.runButton();*/
 
     if (photoE.pressed()) {
-        score--;
-        photoE.disappear();
-        photoF.disappear();
-        nextChoice = 4;
-        waitTime = true;
+        decScore = true;
+        noStroke();
+        textSize(30);
+        fill(255);
+        text("Press spacebar to continue", 350, 850);
+
+        if (spacePressed) {
+            nextChoice = 4;
+            waitTime = true;
+            photoE.disappear();
+            photoF.disappear();
+        }
 
     }
     else if (photoF.pressed()) {
-        score++;
-        photoE.disappear();
-        photoF.disappear();
-        nextChoice = 4;
-        waitTime = true;
+        incScore = true;
+        noStroke();
+        textSize(30);
+        fill(255);
+        text("Press spacebar to continue", 350, 850);
 
+        if (spacePressed) {
+            nextChoice = 4;
+            waitTime = true;
+            photoE.disappear();
+            photoF.disappear();
+        }
     }
-
+   
 }
 
 function choiceFour() {
@@ -305,20 +377,30 @@ function choiceFour() {
   /*  photoH.runButton();*/
 
     if (photoG.pressed()) {
-        score--;
-        photoG.disappear();
-        photoH.disappear();
-        nextChoice = 5;
-        waitTime = true;
-
-
+        decScore = true;
+        noStroke();
+        textSize(30);
+        fill(255);
+        text("Press spacebar to continue", 350, 850);
+        if (spacePressed) {
+            nextChoice = 5;
+            waitTime = true;
+            photoG.disappear();
+            photoH.disappear();
+        }
     }
     else if (photoH.pressed()) {
-        score++;
-        photoG.disappear();
-        photoH.disappear();
-        nextChoice = 5;
-        waitTime = true;
+        incScore = true;
+        noStroke();
+        textSize(30);
+        fill(255);
+        text("Press spacebar to continue", 350, 850);
+        if (spacePressed) {
+            nextChoice = 5;
+            waitTime = true;
+            photoG.disappear();
+            photoH.disappear();
+        }
     }
 }
 
@@ -336,35 +418,73 @@ function choiceFive() {
    /* photoJ.runButton();*/
 
     if (photoI.pressed()) {
-        score--;
-        photoI.disappear();
-        photoJ.disappear();
-        nextChoice = 6;
-        waitTime = true;
-        run_ending = true;
-       
+        decScore = true;
+        noStroke();
+        textSize(30);
+        fill(255);
+        text("Press spacebar to continue", 350, 850);
+        if (spacePressed) {
+            nextChoice = 6;
+            waitTime = true;
+            photoI.disappear();
+            photoJ.disappear();
+            
+        }
     }
     else if (photoJ.pressed()) {
-        score++;
-        photoI.disappear();
-        photoJ.disappear();
-        nextChoice = 6;
-        waitTime = true;
-        run_ending = true;
-    }
+        incScore = true;
+        noStroke();
+        textSize(30);
+        fill(255);
+        text("Press spacebar to continue", 350, 850);
+        if (spacePressed) {
+            nextChoice = 6;
+            waitTime = true;
+            photoI.disappear();
+            photoJ.disappear();
+        }
 
-} 
+    }
+}
+
+function mousePressed() {
+
+    if (decScore) {
+        print("dec working");
+        score -= 1;
+        print("score:"); print(score);
+    //    decScore = false;
+    }
+    else if (incScore) {
+        print("inc working");
+        score += 1;
+        print("score:"); print(score);
+    //    incScore = false;
+    }
+}
+
+function mouseReleased() {
+    decScore = false;
+    incScore = false;
+}
 
 function keyPressed() {
+    //if enter key is pressed
     if (keyCode == 13) {
         enterDown = true;
     }
 
     if (enterDown) {
+        ready = true;
         my_dialogue.inc_idx();
         enterReleased = false;
         if (run_ending) {
-            if (score > 0) {
+            print(score);
+            if (score == 5) {
+                print("best");
+                best_dialogue.inc_idx();
+            }
+            else if (score > 0) {
                 good_dialogue.inc_idx();
             }
 
@@ -373,6 +493,11 @@ function keyPressed() {
             }
 
         }
+        idx++;
+    }
+    //if spacebar is pressed
+    if (keyCode == 32) {
+        spacePressed = true;
     }
 }
 
@@ -388,15 +513,25 @@ function keyReleased() {
         }
         else {
             if (run_ending) {
-                if (score > 0) {
-                    good_dialogue.talk();
+                print(score);
+                if (score == 5) {
+                    print("best");
+                    best_dialogue.talk();
                 }
                 else if (score < 0) {
                     bad_dialogue.talk();
                 }
+                else {
+                    good_dialogue.talk();
+                }
+                
             }
         }
         
+    }
+
+    if (spacePressed) {
+        spacePressed = false;
     }
 }
 
@@ -412,6 +547,7 @@ function incTime() {
 function incWait() {
     if (waitTime) {
         wait++;
+        print(wait);
     }
 
 }
@@ -423,3 +559,30 @@ function incWait() {
 //revamp all code so that it utlizes p5 play
 // things for p5.play: A or B buttons, maybe eyes --> for button: display, check if on button
 //      check if pressed, disappear
+// start each dialoguw with ... to avoid speehc not playing at first
+
+//things to finish tonight
+// fix dialogue text files --> try again after bad ending
+// create loading screen between choices 
+// add background sound
+
+// complete for project
+// add key directions **
+// fix eyes
+// maybe try again button
+// background graphics
+// fix choices and colors **
+// fix background music
+
+
+//... 0
+//Hello. 1
+//Something terrible has happened. // eyes squint 2
+//There's been a tear in the multiverse. 3
+//Imposters of humanity have entered your world. // eyes look forward 4
+//There are five pairs of suspects. 5
+//You must figure out who the imposter is. 6
+//Be careful. // eyes squint 7
+//There will be consequences if you make the wrong choice. // eyes look forward 8
+//Good luck. 9
+

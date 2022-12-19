@@ -1,12 +1,14 @@
 
 class Photo {
 
-    constructor(my_img, x, y, alpha) {
+    constructor(my_img, x, y, choice) {
         this.img = my_img;
         this.xPos = x;
         this.yPos = y;
        /* this.myButton = new Button(this.xPos + this.img.width/4, this.yPos + 600, alpha);*/
-        this.buttonPressed = false;
+        this.imgPressed = false;
+        this.correct = choice; // bool
+        this.color = color(255);
     }
 
     display() {
@@ -21,33 +23,47 @@ class Photo {
 
         applyMatrix();
         this.lightUp();
+        this.chosen();
+        /*this.set_score(); */// might need to change // 
         resetMatrix();
     }
 
-    //this needs to be called in setup fuction
-    //buttonSetup() {
-    //    this.myButton.setup();
-    //}
-
-    //check if button is pressed, if button is pressed return true
-    //runButton() {
-    //    if (this.myButton.mouseOnButton() && mouseIsPressed) {
-    //        this.buttonPressed = true;
-    //    }
-    //}
+    chosen() {
+        if (this.mouseOver() && mouseIsPressed) {
+            if (this.correct == false) {
+                print("working");
+                this.color = color(255, 0, 0); //red;
+            }
+            else if (this.correct == true) {
+                this.color = color(27, 223, 53); // green
+            }
+            this.imgPressed = true;
+        }
+    }
 
     disappear() {
         background(0);
-        this.myButton.disappear();
-        this.buttonPressed = false;
+        //this.myButton.disappear();
+        //this.buttonPressed = false;
     }
 
     pressed() {
-        return this.buttonPressed;
+        return this.imgPressed;
+    }
+
+    set_score() {
+        if (this.pressed()) {
+            if (this.correct == false) {
+                decScore = true;
+            }
+            else if (this.correct == true) {
+                incScore = true;
+            }
+        }
     }
 
     lightUp() {
-        if (this.mouseOver()) {
+        if (this.mouseOver() && !this.imgPressed) {
             this.choiceDisplay();
         }
         else {
@@ -76,58 +92,12 @@ class Photo {
     noChoice() {
         noFill();
         strokeWeight(5);
-        stroke(255);
+        stroke(this.color);
         rect(this.xPos, this.yPos, this.img.width, this.img.height);
     }
 
+    isCorrect() {
+        return this.correct;
+    }
+   
 }
-
-//class Button {
-
-//    constructor(x, y, letter) {
-//        this.xPos = x; // x coordinate of center of sprite
-//        this.yPos = y; // y coordinate of center of sprite
-//        this.letter = letter;
-//        this.my_sprite;
-//        this.pressed = false;
-//    }
-
-//    setup() {
-//        this.my_sprite = new Sprite();
-//        this.my_sprite.visible = false;
-//    }
-
-//    display() {
-//        noStroke();
-//        this.my_sprite.visible = true;
-//        this.my_sprite.pos = { x: this.xPos, y: this.yPos };  
-//        this.my_sprite.width = 75;
-//        this.my_sprite.height = 100;
-//        this.my_sprite.textSize = 40;
-//        this.my_sprite.text = this.letter;
-//        this.my_sprite.textColor = 'black';
-//        this.my_sprite.color = color(255);
-       
-//    }
-
-//    // if button pressed, disappear
-
-//    mouseOnButton() {
-        
-//        if (mouseX > this.xPos - 37 & mouseX < this.xPos + 37 && mouseY > this.yPos - 50 && mouseY < this.yPos + 50) {
-            
-//            return true;
-//        }
-
-//        else {
-//            return false;
-//        }
-//    }
-
-//    disappear() {
-//        this.my_sprite.visible = false;
-//        background(0);
-//    }
-
-//}
-
